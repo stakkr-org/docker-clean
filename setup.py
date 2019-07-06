@@ -1,5 +1,5 @@
 import os
-from setuptools import setup
+from setuptools import find_packages, setup
 
 
 extra_packages = []
@@ -23,6 +23,7 @@ setup(
     author='Emmanuel Dyan',
     author_email='emmanueldyan@gmail.com',
     license='Apache 2.0',
+    packages=find_packages(exclude=['docs', 'tests*']),
     py_modules=['docker_clean'],
     entry_points='''[console_scripts]
 docker-clean=docker_clean:main''',
