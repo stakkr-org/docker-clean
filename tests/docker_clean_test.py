@@ -2,9 +2,9 @@ import os
 import sys
 import unittest
 
+import docker_clean
 from click.testing import CliRunner
 from docker.errors import NotFound
-from stakkr.docker_clean import clean
 from docker import client
 DOCKER_CLIENT = client.from_env()
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -12,8 +12,42 @@ sys.path.insert(0, BASE_DIR + '/../')
 
 
 class DockerCleanTest(unittest.TestCase):
+    def test_pretend_remove_containers(self):
+        docker_clean.remove_containers(False)
+
+    def test_pretend_remove_images(self):
+        docker_clean.remove_images(False)
+
+    def test_pretend_remove_networks(self):
+        DOCKER_CLIENT.networks.prune()
+        DOCKER_CLIENT.networks.create('network_pytest')
+        num_networks = len(DOCKER_CLIENT.networks.list())
+        docker_clean.remove_networks(False)
+        self.assertEqual(num_networks, len(DOCKER_CLIENT.networks.list()))
+
+    def test_remove_networks(self):
+        DOCKER_CLIENT.networks.prune()
+        DOCKER_CLIENT.networks.create('network_pytest')
+        num_networks = len(DOCKER_CLIENT.networks.list())
+        docker_clean.remove_networks(True)
+        self.assertEqual((num_networks - 1), len(DOCKER_CLIENT.networks.list()))
+
+    def test_pretend_remove_volumes(self):
+        DOCKER_CLIENT.volumes.prune()
+        DOCKER_CLIENT.volumes.create('test123')
+        num_volumes = len(DOCKER_CLIENT.volumes.list())
+        docker_clean.remove_volumes(False)
+        self.assertEqual(num_volumes, len(DOCKER_CLIENT.volumes.list()))
+
+    def test_remove_volumes(self):
+        DOCKER_CLIENT.volumes.prune()
+        DOCKER_CLIENT.volumes.create('test123')
+        num_volumes = len(DOCKER_CLIENT.volumes.list())
+        docker_clean.remove_volumes(True)
+        self.assertEqual((num_volumes - 1), len(DOCKER_CLIENT.volumes.list()))
+
     def test_no_arg(self):
-        result = CliRunner().invoke(clean)
+        result = CliRunner().invoke(docker_clean.clean)
         self.assertEqual(0, result.exit_code)
         regex = r'.*Cleaning Docker stopped containers.*'
         self.assertRegex(result.output, regex)
@@ -25,7 +59,7 @@ class DockerCleanTest(unittest.TestCase):
         self.assertRegex(result.output, regex)
 
     def test_bad_arg(self):
-        result = CliRunner().invoke(clean, ['hello-world'])
+        result = CliRunner().invoke(docker_clean.clean, ['hello-world'])
         self.assertEqual(2, result.exit_code)
         self.assertRegex(result.output, r'Usage: docker-clean \[OPTIONS\].*')
 
@@ -74,7 +108,7 @@ class DockerCleanTest(unittest.TestCase):
         self.assertIs(len(cts), (2 + num_default_cts))
 
         # CLEAN
-        result = CliRunner().invoke(clean, ['--force'])
+        result = CliRunner().invoke(docker_clean.clean, ['--force'])
         self.assertEqual(0, result.exit_code)
         regex = r'.*Cleaning Docker stopped containers.*'
         self.assertRegex(result.output, regex)
@@ -103,7 +137,7 @@ class DockerCleanTest(unittest.TestCase):
         ct_test.stop()
 
         # Stop adminer and clean again
-        result = CliRunner().invoke(clean, ['--force'])
+        result = CliRunner().invoke(docker_clean.clean, ['--force'])
         self.assertEqual(0, result.exit_code, 'Error: {}'.format(result.output))
         regex = r'.*Cleaning Docker stopped containers.*'
         self.assertRegex(result.output, regex)

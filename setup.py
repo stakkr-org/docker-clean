@@ -23,14 +23,13 @@ setup(
     author='Emmanuel Dyan',
     author_email='emmanueldyan@gmail.com',
     license='Apache 2.0',
-    py_modules=['docker-clean'],
+    py_modules=['docker_clean'],
     entry_points='''[console_scripts]
-docker-clean=stakkr.docker_clean:main''',
+docker-clean=docker_clean:main''',
     include_package_data=True,
     install_requires=[
         'click>=7',
         'clint==0.5.1',
-        # Docker compose includes requests and docker
         'docker>3.7',
         'humanfriendly==4.18'
         ] + extra_packages,

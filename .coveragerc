@@ -1,6 +1,6 @@
 [run]
 branch = True
-source = stakkr/
+source = ./
 parallel = False
 
 [report]
