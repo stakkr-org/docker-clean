@@ -9,7 +9,6 @@ python:
 
 install:
   - pip install -e .
-  - stakkr-init
   - pip install -r requirements-dev.txt
 
 env:
