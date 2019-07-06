@@ -16,7 +16,7 @@ DOCKER_CLIENT = client.from_env(timeout=360)
 
 @click.command(help="""Clean Docker containers, images, volumes and networks
 that are not in use""", name="docker-clean")
-@click.version_option('1.0.1')
+@click.version_option('1.0.2')
 @click.option('--force', '-f', help="Do it", is_flag=True)
 @click.option('--containers/--no-containers', '-c/', help="Remove containers", is_flag=True, default=True)
 @click.option('--images/--no-images', '-i/', help="Remove images", is_flag=True, default=True)
