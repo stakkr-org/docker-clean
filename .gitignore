@@ -1,0 +1,25 @@
+# Everything about Python
+/.cache
+.pytest_cache
+/build
+/dist
+*.egg-info
+__pycache__
+*_stakkr
+venv
+*.pyc
+
+# Tests
+.coverage*
+!.coveragerc
+htmlcov
+coverage.xml
+/coverage/*
+
+
+# Local configuration
+/.idea
+.DS_Store
+/conf
+deploythat.yml
+

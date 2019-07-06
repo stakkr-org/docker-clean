@@ -1,0 +1,34 @@
+sudo: required
+dist: trusty
+
+language: python
+python:
+  - "3.4"
+  - "3.5"
+  - "3.6"
+
+install:
+  - pip install -e .
+  - stakkr-init
+  - pip install -r requirements-dev.txt
+
+env:
+  global:
+  - TRAVIS_SECURE_ENV_VARS=true
+  - secure: "ZcRTIkj3OLr3ROuLTC9qhqDLC9CsXDZQFoxM3TPWWJjk/4+1AGcu4Jag+qlbSCk36qvV35AFcIs8cOv8IThiR2mmG+ufhhBdyFVmGdLL4y7SezZbJ6jnapb5/TdStrEai+Z3JjEZVxJAZzWnMZsvKKnvmUQN3Q7MvLb/CvzAjeoQTxnohH7nJVtgY2jvpEZ/HLR8LGLq1Pn/foDLWibgEUHa93S+zGWhc1JcpRNvqeLYW9R7Xsdyw8YiJoItHwrt1RyPPq0+nvVwuJMdhIl2zXCuSjQ+sFhQSpca1LpWUJUaCqAgupwOmjIpgBR4cMl/SIFPssFomM2NqXjdjTsMZl82Pk4dB6fS0CZ/db9ER85+gx/YlG2GlcAkzFwi0OPjUnPzJh/cQ6FvYd6mvPWWcANMg2GVWYDJuT8dePraPOE6b/TxQ3kStg/wFcvO7dikAYrDfoWdrFwMimIJYNMC3JiyZ+lI3yuI6HfV1gWg4ovhPuTdIxSBXj3ThVYFIbgXDyZoRPWxhK2Flgz10cTmRods16R9thQmzqQWKSydzRh6Ejn9gFcxroNytH31IhmGVfo+ycFGMyde0qR1NOsSEGvnq7SII4KHt7HkxrTm3VLQUAKP7KJIAB+QG+KsUPiXK/4XYQ/uUKfilxXENYtHdaoy113ZT8u/pYPzxIFJuWQ="
+
+notifications:
+  slack:
+      secure: "WQ3nL18fuiSF6GvOle6AKlod4t5C5pSvTFsOC1jVMoX05rYYMbp0I1LW77y1aoAsns2ccZZAL3zleH2R11OzCpZmLCPxnTw/3/P8KXYGlbPbjvPrZhMIHQ1xk3pwmsq95bTry1LzxdfEhjuyn1ZCuPwLNBA0Em8L8w8DnI4XxP/YewQdUTdnIMZXWMpWOhyS2gpbJz7E3gh8+Jc2TeAkeOAo9hRJpNJYCo2Iybl+zPBdZm25T00paKEVgxRo2l2ocRkWuUa6dShi5U4UfnuytGnOa8KK3HZQlH7g72cijidf/h7LVNE0ItBET1P+zWdxLSuzQEZ053UnaYBvrdxKCG3Xa9qOGDyV8mqQ/LSCfe0prDyw7X116zfAeVMQ7NxdbSK3TbIVI0Y9SlJ5/aj4Ux3SeLC8PU4icKFM+lRpJMoTICUeVroQ+0+dZqK91Gr38NA79q0km00hnAhzNHfUgXj2/GewhsyoXa66PXrgIB0U9EI5QrTvvv0ZOP6NSIrsr01HUYIvZFUB2qI4dybMb/a2rQExkP0tq5ULy4Q7r7trGciF9YHe75QOV7YmaiHU4iz7ugd3UIoPwxSKVFm/zYSMoipzY202GoWgtgiX/uf3/PMXYw1H5i+hXFWGWHvf+9w+/rtlOqPT1Rk+ibQt56HKd0nsB3Fj3T0cY0YdAzc="
+
+before_script:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
+
+# command to run tests
+script: py.test
+
+after_script:
+  - coverage xml
+  - if [[ "$TRAVIS_PYTHON_VERSION" == "3.6" ]]; then ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT; fi
