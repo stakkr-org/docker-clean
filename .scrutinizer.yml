@@ -43,6 +43,3 @@ checks:
         duplicate_code: true
         classes_valid_slots: true
 
-filter:
-    paths:
-        - stakkr/
